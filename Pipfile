@@ -13,6 +13,7 @@ matplotlib = "*"
 pandas = "*"
 schedule = "*"
 pyyaml = "*"
+pyopenssl = "*"
 
 [requires]
 python_version = "3.8"

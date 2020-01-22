@@ -1,4 +1,4 @@
-NAME = tick-impluse
+NAME = tick
 VERSION = 1.0.0
 IMAGE = reg.lab.st/$(NAME):$(VERSION)
 
