@@ -24,10 +24,12 @@ SYMBOLS = [
     'EUR_USD',
     'GBP_USD',
     'HKD_JPY',
+    'NZD_USD',
     'USD_CAD',
     'USD_CHF',
     'USD_HKD',
-    'USD_JPY'
+    'USD_JPY',
+    'USD_SGD'
 ]
 
 
@@ -58,6 +60,13 @@ class Instrument:
             return "{:.3f}".format(price)
         else:
             return "{:.5f}".format(price)
+
+
+class Trade:
+    def __init__(self, id, symbol, long):
+        self.id = id
+        self.symbol = symbol
+        self.long = long
 
 
 class Base:

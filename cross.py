@@ -6,7 +6,7 @@ import time
 import schedule
 from talib import EMA
 
-from common import API, SIZE, Base, cross_up, cross_down
+from common import API, SIZE, Base, Trade, cross_up, cross_down
 
 ACCOUNT_ID = '001-001-3420740-004'
 
@@ -22,6 +22,11 @@ class Cross(Base):
         orders = [o.instrument for o in filter(
             lambda o: o.type in ['STOP', 'LIMIT'], response.body['orders'])]
 
+        # Open trades
+        response = API.trade.list_open(ACCOUNT_ID)
+        trades = [Trade(t.id, t.instrument, True if t.initialUnits > 0 else False)
+                  for t in response.body['trades']]
+
         # Order
         for instrument in self.instruments:
             symbol = instrument.symbol
@@ -33,6 +38,7 @@ class Cross(Base):
             ema6 = EMA(close, timeperiod=6)
             ema18 = EMA(close, timeperiod=18)
             units = SIZE
+            buy = True
 
             logging.info('symbol=%s, time=%s', symbol, t)
 
@@ -40,17 +46,22 @@ class Cross(Base):
                 logging.info('buy %s', symbol)
             elif cross_down(ema6, ema18):
                 logging.info('sell %s', symbol)
+                buy = False
                 units = -units
             else:
                 continue
 
+            # Close
+            for trade in trades:
+                if trade.symbol == symbol and trade.long == buy:
+                    API.trade.close(ACCOUNT_ID, trade.id)
+
+            # Order
             response = API.order.market(
                 ACCOUNT_ID,
                 instrument=symbol,
                 units=units
             )
-            if response.status != 201:
-                print(response.body)
 
 
 if __name__ == '__main__':
