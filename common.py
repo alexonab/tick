@@ -3,6 +3,10 @@ import logging
 import pandas as pd
 from v20 import Context
 
+# API = Context(
+#     'api-fxpractice.oanda.com',
+#     token='d9239a7c4e8dcad5d6c70ed6769e81e9-6f3637c29d8583d11f1336a9788071b4'
+# )
 API = Context(
     'api-fxtrade.oanda.com',
     token='a773e0c5b6a682afa486d77beb884fc1-4823f26d2d2f72cba25c59626caacb54'

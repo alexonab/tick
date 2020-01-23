@@ -8,19 +8,13 @@ from talib import EMA
 
 from common import API, SIZE, Base, Trade, cross_up, cross_down
 
+# ACCOUNT_ID = '101-001-13004448-001'
 ACCOUNT_ID = '001-001-3420740-004'
 
 
 class Cross(Base):
     def process(self):
         logging.info('process')
-
-        # Pending orders
-        response = API.order.list_pending(ACCOUNT_ID)
-        if response.status != 200:
-            print(response.body)
-        orders = [o.instrument for o in filter(
-            lambda o: o.type in ['STOP', 'LIMIT'], response.body['orders'])]
 
         # Open trades
         response = API.trade.list_open(ACCOUNT_ID)
@@ -30,38 +24,46 @@ class Cross(Base):
         # Order
         for instrument in self.instruments:
             symbol = instrument.symbol
-            if symbol in orders:
-                continue
             data = instrument.data
             t = data['time'].values[-1]
             close = data['close'].values
+            ema3 = EMA(close, timeperiod=3)
             ema6 = EMA(close, timeperiod=6)
             ema18 = EMA(close, timeperiod=18)
             units = SIZE
+            trade = next((t for t in trades if t.symbol ==
+                          symbol), Trade(0, symbol, None))
             buy = True
 
-            logging.info('symbol=%s, time=%s', symbol, t)
+            # logging.info('symbol=%s, time=%s', symbol, t)
 
-            if cross_up(ema6, ema18):
-                logging.info('buy %s', symbol)
-            elif cross_down(ema6, ema18):
-                logging.info('sell %s', symbol)
-                buy = False
-                units = -units
-            else:
-                continue
+            # Enter long
+            if cross_up(ema6, ema18) and trade.long in [None, False]:
+                logging.info("long entry: symbol=%s", symbol)
+                response = API.order.market(
+                    ACCOUNT_ID,
+                    instrument=symbol,
+                    units=SIZE
+                )
 
-            # Close
-            for trade in trades:
-                if trade.symbol == symbol and trade.long == buy:
-                    API.trade.close(ACCOUNT_ID, trade.id)
+            # Exit long
+            if cross_down(ema3, ema6) and trade.long:
+                logging.info("long exit: symbol=%s", symbol)
+                API.trade.close(ACCOUNT_ID, trade.id)
 
-            # Order
-            response = API.order.market(
-                ACCOUNT_ID,
-                instrument=symbol,
-                units=units
-            )
+            # Enter short
+            if cross_down(ema6, ema18) and trade.long in [None, True]:
+                logging.info("short entry: symbol=%s", symbol)
+                response = API.order.market(
+                    ACCOUNT_ID,
+                    instrument=symbol,
+                    units=-SIZE
+                )
+
+            # Exit short
+            if cross_up(ema3, ema6) and trade.long is False:
+                logging.info("short exit: symbol=%s", symbol)
+                API.trade.close(ACCOUNT_ID, trade.id)
 
 
 if __name__ == '__main__':
