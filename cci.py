@@ -20,29 +20,28 @@ class Instrument():
         self.length = length
         self.middle = middle
         self.quantity = 1
+        self.long = False
+        self.short = False
 
 
 def process():
     logging.info('process')
+    data = alpaca.get_bars([i.symbol for i in instruments])
     for i in instruments:
-        i.data = alpaca.get_quotes(i.symbol)
+        i.data = data[i.symbol].dropna(subset=["open"])
         i.quantity = int(ORDER_SIZE / i.data['close'][-1])
         i.cci = TA.CCI(i.data, period=28)
-        price = i.data['close'][-1]
+        q = i.quantity
+        if i.long or i.short:
+            q *= 2
         if i.cci[-2] < 0 < i.cci[-1]:
-            logging.info('Buy: symbol={}, price={}'.format(i.symbol, price))
-            if i.short:
-                td.order(i, td.SELL)
-                i.short = False
-            td.order(i, td.BUY)
-            i.long = True
+            if not i.long:
+                td.order(i, td.BUY, q)
+                i.long = True
         elif i.cci[-2] > 0 > i.cci[-1]:
-            logging.info('Sell: symbol={}, price={}'.format(i.symbol, price))
-            if i.long:
-                td.order(i, td.BUY)
-                i.long = False
-            td.order(i, td.SELL)
-            i.short = True
+            if not i.short:
+                td.order(i, td.SELL, q)
+                i.short = True
 
 
 if __name__ == '__main__':

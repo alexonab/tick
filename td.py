@@ -1,3 +1,4 @@
+import logging
 import time
 
 import pandas as pd
@@ -63,8 +64,8 @@ def get_price_history(symbol, frequency_type='minute', frequency=1):
     return pd.DataFrame.from_records(records, index='time')
 
 
-def order(instrument, instruction):
-    return
+def order(instrument, instruction, quantity):
+    logging.info('{}: symbol={}, price={}'.format(instruction, instrument.symbol, instrument.data['close'][-1]))
     r = requests.post(BASE_URL + '/accounts/{}/orders'.format(ACCOUNT_ID), headers=headers(), json={
         'orderType': 'MARKET',
         'session': 'NORMAL',
@@ -73,7 +74,7 @@ def order(instrument, instruction):
         'orderLegCollection': [
             {
                 'instruction': instruction,
-                'quantity': instrument.quantity,
+                'quantity': quantity,
                 'instrument': {
                     'symbol': instrument.symbol,
                     'assetType': 'EQUITY'
@@ -88,6 +89,6 @@ if __name__ == '__main__':
     # account()
     i = cci.Instrument('AAPL')
     i.quantity = 1
-    order(i, BUY)
-    order(i, SELL)
+    # order(i, BUY)
+    # order(i, SELL)
     # get_price_history('%2FCL')
