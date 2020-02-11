@@ -28,8 +28,8 @@ def process():
     logging.info('process')
     data = alpaca.get_bars([i.symbol for i in instruments])
     for i in instruments:
-        i.data = data[i.symbol].dropna(subset=["open"])
-        i.quantity = int(ORDER_SIZE / i.data['close'][-1])
+        i.data = data[i.symbol].dropna()
+        i.quantity = int(ORDER_SIZE / i.data.close[-1])
         i.cci = TA.CCI(i.data, period=28)
         q = i.quantity
         if i.long or i.short:

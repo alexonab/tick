@@ -19,6 +19,8 @@ finta = "*"
 requests = "*"
 aiohttp = "*"
 alpaca-trade-api = "*"
+backtesting = "*"
+backtrader = "*"
 
 [requires]
 python_version = "3.8"
