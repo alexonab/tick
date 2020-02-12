@@ -6,30 +6,24 @@ SECRET = '7MlM7hCShyAV6Jmn0QyaRVE0OLf9Hrhg0LOxRUYd'
 API = tradeapi.REST(ID, SECRET, api_version='v2')
 
 
-# Heikin Ashi has a unique method to filter out the noise
-# its open, close, high, low require a different calculation approach
-# please refer to the website mentioned above
-def heikin_ashi(df1):
-    # df1.reset_index(inplace=True)
-
-    df1.ha_close = (df1.open + df1.close + df1.high + df1.low) / 4
-
-    # initialize heikin ashi open
-    df1.ha_open = 0
-    df1.ha_open = df1.open[0]
-
-    for n in range(1, len(df1)):
-        df1.at[n, 'ha_open'] = (df1['ha_open'][n - 1] + df1['ha_close'][n - 1]) / 2
-
-    temp = pd.concat([df1['ha_open'], df1['ha_close'], df1['low'], df1['high']], axis=1)
-    df1['ha_high'] = temp.apply(max, axis=1)
-    df1['ha_low'] = temp.apply(min, axis=1)
-
-    return df1
+def heikin_ashi(data: pd.DataFrame):
+    data.close = (data.open + data.close + data.high + data.low) / 4
+    _open = [(data.open[0] + data.close[0]) / 2]
+    [_open.append((_open[i] + data.close[i]) / 2) for i in range(0, len(data) - 1)]
+    data.open = _open
+    data.high = data[['open', 'close', 'high']].max(axis=1)
+    data.low = data[['open', 'close', 'low']].min(axis=1)
+    return data
 
 
 def get_bars(symbols, interval='1Min', limit=100):
     bars = API.get_barset(symbols, interval, limit).df
     for s in symbols:
+        b = bars[s]
+        b_ha = heikin_ashi(bars[s].copy())
         bars[s] = heikin_ashi(bars[s])
     return bars
+
+
+if __name__ == '__main__':
+    get_bars(['AAPL'])
