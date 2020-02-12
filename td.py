@@ -4,8 +4,6 @@ import time
 import pandas as pd
 import requests
 
-import cci
-
 BASE_URL = 'https://api.tdameritrade.com/v1'
 CLIENT_ID = 'ULGR9QXGJPZMHTHHFJDM8SC7XLBKLNQZ'
 TOKENS = {
@@ -65,7 +63,7 @@ def get_price_history(symbol, frequency_type='minute', frequency=1):
 
 
 def order(instrument, instruction, quantity):
-    logging.info('{}: symbol={}, price={}'.format(instruction, instrument.symbol, instrument.data['close'][-1]))
+    logging.info('{}: symbol={}, price={}'.format(instruction, instrument.symbol, instrument.candles.close[-1]))
     r = requests.post(BASE_URL + '/accounts/{}/orders'.format(ACCOUNT_ID), headers=headers(), json={
         'orderType': 'MARKET',
         'session': 'NORMAL',
@@ -83,12 +81,3 @@ def order(instrument, instruction, quantity):
         ]
     })
     print(r)
-
-
-if __name__ == '__main__':
-    # account()
-    i = cci.Instrument('AAPL')
-    i.quantity = 1
-    # order(i, BUY)
-    # order(i, SELL)
-    # get_price_history('%2FCL')

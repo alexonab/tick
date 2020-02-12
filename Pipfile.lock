@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "94577636f4e50ab20c046da431d09d39d787df6f8384dbf5c87dd5180f4fed0c"
+            "sha256": "cb7315c6eb04e78f63a63d08bff638db9c0f29dd33c98af647cf2359400bc277"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -419,6 +419,14 @@
                 "sha256:ff3797f2f16bf9d17d53257612da84dd0758db33935777149b3334c01ff68865"
             ],
             "version": "==7.0.0"
+        },
+        "polygon-api-client": {
+            "hashes": [
+                "sha256:4c84eca558f31ad7b3506e0bb8c0ec1e042ed44ec3781801aa193b05c482eeef",
+                "sha256:b5faa64a695b205990cea332a4e102ab5ac0e42ea9fdd9539cb54ec32211d552"
+            ],
+            "index": "pypi",
+            "version": "==0.1.1"
         },
         "pycparser": {
             "hashes": [

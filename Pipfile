@@ -21,6 +21,7 @@ aiohttp = "*"
 alpaca-trade-api = "*"
 backtesting = "*"
 backtrader = "*"
+polygon-api-client = "*"
 
 [requires]
 python_version = "3.8"
