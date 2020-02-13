@@ -13,4 +13,4 @@ RUN pipenv install
 
 COPY *.py /
 
-ENTRYPOINT ["pipenv", "run"]
+ENTRYPOINT ["pipenv", "run", "/server.py"]

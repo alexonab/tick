@@ -63,7 +63,7 @@ def get_price_history(symbol, frequency_type='minute', frequency=1):
 
 
 def order(instrument, instruction, quantity):
-    logging.info('{}: symbol={}, price={}'.format(instruction, instrument.symbol, instrument.candles.close[-1]))
+    logging.info('{}: symbol={}'.format(instruction, instrument.symbol))
     r = requests.post(BASE_URL + '/accounts/{}/orders'.format(ACCOUNT_ID), headers=headers(), json={
         'orderType': 'MARKET',
         'session': 'NORMAL',
