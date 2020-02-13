@@ -21,10 +21,12 @@ def process(i: alpaca.Instrument):
         if not i.long:
             td.order(i, td.BUY, q)
             i.long = True
+            i.short = False
     elif i.cci[-2] > 0 > i.cci[-1]:
         if not i.short:
             td.order(i, td.SELL, q)
             i.short = True
+            i.long = False
 
 
 if __name__ == '__main__':

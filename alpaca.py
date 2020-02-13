@@ -76,8 +76,10 @@ if __name__ == '__main__':
     instruments.append(Instrument('AMZN', 25))
     instruments.append(Instrument('AAPL', 150))
     instruments.append(Instrument('NFLX', 150))
+    instruments.append(Instrument('AMD', 1000))
+    instruments.append(Instrument('MU', 1000))
 
     # WS
     ws = WebSocketClient(STOCKS_CLUSTER, POLYGON_KEY_ID, on_message)
     ws.run_async()
-    ws.subscribe('AM.AAPL', 'AM.NFLX', 'AM.AMZN')
+    ws.subscribe('AM.AAPL', 'AM.NFLX', 'AM.AMZN', 'AM.AMD', 'AM.MU')
