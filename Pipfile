@@ -22,6 +22,7 @@ alpaca-trade-api = "*"
 backtesting = "*"
 backtrader = "*"
 polygon-api-client = "*"
+bokeh = "*"
 
 [requires]
 python_version = "3.8"

@@ -35,6 +35,17 @@ SYMBOLS = [
 ]
 
 
+class I:
+    def __init__(self, symbol, quantity=1, period=50):
+        self.symbol = symbol
+        self.period = period
+        self.quantity = quantity
+        self.direction = 0
+        self.position = False
+        self.long = False
+        self.short = False
+
+
 def cross_up(series1, series2):
     return series1[-2] < series2[-2] and series1[-1] > series2[-1]
 

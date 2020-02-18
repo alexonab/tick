@@ -62,8 +62,21 @@ def get_price_history(symbol, frequency_type='minute', frequency=1):
     return pd.DataFrame.from_records(records, index='time')
 
 
-def order(instrument, instruction, quantity):
+def buy(instrument):
+    _order(instrument, BUY)
+    instrument.position = True
+
+
+def sell(instrument):
+    _order(instrument, SELL)
+    instrument.position = True
+
+
+def _order(instrument, instruction):
     logging.info('{}: symbol={}'.format(instruction, instrument.symbol))
+    q = instrument.quantity
+    if instrument.position:
+        q *= 2
     r = requests.post(BASE_URL + '/accounts/{}/orders'.format(ACCOUNT_ID), headers=headers(), json={
         'orderType': 'MARKET',
         'session': 'NORMAL',
@@ -72,7 +85,7 @@ def order(instrument, instruction, quantity):
         'orderLegCollection': [
             {
                 'instruction': instruction,
-                'quantity': quantity,
+                'quantity': q,
                 'instrument': {
                     'symbol': instrument.symbol,
                     'assetType': 'EQUITY'

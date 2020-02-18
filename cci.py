@@ -12,7 +12,7 @@ LENGTH = 8
 
 def process(i: alpaca.Instrument):
     logging.info('processing {}'.format(i.symbol))
-    i.cci = TA.CCI(i.heikins, period=i.length)
+    i.cci = TA.CCI(i.heikins, period=i.period)
     print(i.heikins.index[-1], i.heikins.close[-1], i.cci[-2], i.cci[-1])
     q = i.quantity
     if i.long or i.short:

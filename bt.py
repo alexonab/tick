@@ -1,28 +1,34 @@
 from backtesting import Backtest, Strategy
+
+import engine
+from atr import ATR
 from finta import TA
 
-import alpaca
-
-
-class CCI(Strategy):
+class ATRTes(Strategy):
     def init(self):
-        self.cci = self.I(TA.CCI, data, 28)
+        atr = self.multiplier * TA.ATR(candles, ).dropna()
+    def next(self):
+
+class BT(Strategy):
+    strategy = None
+    candles = None
+
+    def init(self):
+        self.sma1 = self.I(TA.SMA, candles, 10)
 
     def next(self):
-        if self.cci[-2] < 0 < self.cci[-1]:
-            self.buy()
-        elif self.cci[-2] > 0 > self.cci[-1]:
-            self.sell()
+        for i in self.strategy.instruments:
+            i.process(self.candles, self)
 
 
-data = alpaca.get_bars(['MSFT'], interval='1Min', limit=1000)
-data = data['MSFT'].dropna()
-data['Open'] = data['open']
-data['High'] = data['high']
-data['Low'] = data['low']
-data['Close'] = data['close']
-data['Volume'] = data['volume']
-bt = Backtest(data, CCI, cash=1000000)
+if __name__ == '__main__':
+    candles = engine.get_heikins('INTU')
+    candles['Open'] = candles['open']
+    candles['High'] = candles['high']
+    candles['Low'] = candles['low']
+    candles['Close'] = candles['close']
+    candles['Volume'] = candles['volume']
 
-bt.run()
-bt.plot()
+    bt = Backtest(candles, BT, cash=1000000)
+    bt.run(candles=candles, strategy=ATR())
+    bt.plot()
